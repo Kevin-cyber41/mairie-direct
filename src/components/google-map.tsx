@@ -96,7 +96,7 @@ export function GoogleMap({ markers, className, fallbackCenter = { lat: 47.357, 
         icon: {
           path: window.google.maps.SymbolPath.CIRCLE,
           scale: 9,
-          fillColor: m.color,
+          fillColor: resolveColor(m.color),
           fillOpacity: 1,
           strokeColor: "#ffffff",
           strokeWeight: 2.5,
