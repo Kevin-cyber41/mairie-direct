@@ -9,38 +9,168 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignalerRouteImport } from './routes/signaler'
+import { Route as ProfilRouteImport } from './routes/profil'
+import { Route as MesSignalementsRouteImport } from './routes/mes-signalements'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as CarteRouteImport } from './routes/carte'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SignalementIdRouteImport } from './routes/signalement.$id'
+import { Route as ConfirmationIdRouteImport } from './routes/confirmation.$id'
 
+const SignalerRoute = SignalerRouteImport.update({
+  id: '/signaler',
+  path: '/signaler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfilRoute = ProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MesSignalementsRoute = MesSignalementsRouteImport.update({
+  id: '/mes-signalements',
+  path: '/mes-signalements',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarteRoute = CarteRouteImport.update({
+  id: '/carte',
+  path: '/carte',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignalementIdRoute = SignalementIdRouteImport.update({
+  id: '/signalement/$id',
+  path: '/signalement/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfirmationIdRoute = ConfirmationIdRouteImport.update({
+  id: '/confirmation/$id',
+  path: '/confirmation/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/carte': typeof CarteRoute
+  '/login': typeof LoginRoute
+  '/mes-signalements': typeof MesSignalementsRoute
+  '/profil': typeof ProfilRoute
+  '/signaler': typeof SignalerRoute
+  '/confirmation/$id': typeof ConfirmationIdRoute
+  '/signalement/$id': typeof SignalementIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/carte': typeof CarteRoute
+  '/login': typeof LoginRoute
+  '/mes-signalements': typeof MesSignalementsRoute
+  '/profil': typeof ProfilRoute
+  '/signaler': typeof SignalerRoute
+  '/confirmation/$id': typeof ConfirmationIdRoute
+  '/signalement/$id': typeof SignalementIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/carte': typeof CarteRoute
+  '/login': typeof LoginRoute
+  '/mes-signalements': typeof MesSignalementsRoute
+  '/profil': typeof ProfilRoute
+  '/signaler': typeof SignalerRoute
+  '/confirmation/$id': typeof ConfirmationIdRoute
+  '/signalement/$id': typeof SignalementIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/carte'
+    | '/login'
+    | '/mes-signalements'
+    | '/profil'
+    | '/signaler'
+    | '/confirmation/$id'
+    | '/signalement/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/carte'
+    | '/login'
+    | '/mes-signalements'
+    | '/profil'
+    | '/signaler'
+    | '/confirmation/$id'
+    | '/signalement/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/carte'
+    | '/login'
+    | '/mes-signalements'
+    | '/profil'
+    | '/signaler'
+    | '/confirmation/$id'
+    | '/signalement/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CarteRoute: typeof CarteRoute
+  LoginRoute: typeof LoginRoute
+  MesSignalementsRoute: typeof MesSignalementsRoute
+  ProfilRoute: typeof ProfilRoute
+  SignalerRoute: typeof SignalerRoute
+  ConfirmationIdRoute: typeof ConfirmationIdRoute
+  SignalementIdRoute: typeof SignalementIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signaler': {
+      id: '/signaler'
+      path: '/signaler'
+      fullPath: '/signaler'
+      preLoaderRoute: typeof SignalerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profil': {
+      id: '/profil'
+      path: '/profil'
+      fullPath: '/profil'
+      preLoaderRoute: typeof ProfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mes-signalements': {
+      id: '/mes-signalements'
+      path: '/mes-signalements'
+      fullPath: '/mes-signalements'
+      preLoaderRoute: typeof MesSignalementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carte': {
+      id: '/carte'
+      path: '/carte'
+      fullPath: '/carte'
+      preLoaderRoute: typeof CarteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,12 +178,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/signalement/$id': {
+      id: '/signalement/$id'
+      path: '/signalement/$id'
+      fullPath: '/signalement/$id'
+      preLoaderRoute: typeof SignalementIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confirmation/$id': {
+      id: '/confirmation/$id'
+      path: '/confirmation/$id'
+      fullPath: '/confirmation/$id'
+      preLoaderRoute: typeof ConfirmationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CarteRoute: CarteRoute,
+  LoginRoute: LoginRoute,
+  MesSignalementsRoute: MesSignalementsRoute,
+  ProfilRoute: ProfilRoute,
+  SignalerRoute: SignalerRoute,
+  ConfirmationIdRoute: ConfirmationIdRoute,
+  SignalementIdRoute: SignalementIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
