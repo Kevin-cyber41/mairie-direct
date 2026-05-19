@@ -9,38 +9,246 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignalerRouteImport } from './routes/signaler'
+import { Route as ProfilRouteImport } from './routes/profil'
+import { Route as MesSignalementsRouteImport } from './routes/mes-signalements'
+import { Route as MairieRouteImport } from './routes/mairie'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as CarteRouteImport } from './routes/carte'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MairieIndexRouteImport } from './routes/mairie.index'
+import { Route as SignalementIdRouteImport } from './routes/signalement.$id'
+import { Route as MairieStatistiquesRouteImport } from './routes/mairie.statistiques'
+import { Route as MairieSignalementsRouteImport } from './routes/mairie.signalements'
+import { Route as MairieCarteRouteImport } from './routes/mairie.carte'
+import { Route as MairieAgentsRouteImport } from './routes/mairie.agents'
+import { Route as ConfirmationIdRouteImport } from './routes/confirmation.$id'
 
+const SignalerRoute = SignalerRouteImport.update({
+  id: '/signaler',
+  path: '/signaler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfilRoute = ProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MesSignalementsRoute = MesSignalementsRouteImport.update({
+  id: '/mes-signalements',
+  path: '/mes-signalements',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MairieRoute = MairieRouteImport.update({
+  id: '/mairie',
+  path: '/mairie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarteRoute = CarteRouteImport.update({
+  id: '/carte',
+  path: '/carte',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MairieIndexRoute = MairieIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MairieRoute,
+} as any)
+const SignalementIdRoute = SignalementIdRouteImport.update({
+  id: '/signalement/$id',
+  path: '/signalement/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MairieStatistiquesRoute = MairieStatistiquesRouteImport.update({
+  id: '/statistiques',
+  path: '/statistiques',
+  getParentRoute: () => MairieRoute,
+} as any)
+const MairieSignalementsRoute = MairieSignalementsRouteImport.update({
+  id: '/signalements',
+  path: '/signalements',
+  getParentRoute: () => MairieRoute,
+} as any)
+const MairieCarteRoute = MairieCarteRouteImport.update({
+  id: '/carte',
+  path: '/carte',
+  getParentRoute: () => MairieRoute,
+} as any)
+const MairieAgentsRoute = MairieAgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
+  getParentRoute: () => MairieRoute,
+} as any)
+const ConfirmationIdRoute = ConfirmationIdRouteImport.update({
+  id: '/confirmation/$id',
+  path: '/confirmation/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/carte': typeof CarteRoute
+  '/login': typeof LoginRoute
+  '/mairie': typeof MairieRouteWithChildren
+  '/mes-signalements': typeof MesSignalementsRoute
+  '/profil': typeof ProfilRoute
+  '/signaler': typeof SignalerRoute
+  '/confirmation/$id': typeof ConfirmationIdRoute
+  '/mairie/agents': typeof MairieAgentsRoute
+  '/mairie/carte': typeof MairieCarteRoute
+  '/mairie/signalements': typeof MairieSignalementsRoute
+  '/mairie/statistiques': typeof MairieStatistiquesRoute
+  '/signalement/$id': typeof SignalementIdRoute
+  '/mairie/': typeof MairieIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/carte': typeof CarteRoute
+  '/login': typeof LoginRoute
+  '/mes-signalements': typeof MesSignalementsRoute
+  '/profil': typeof ProfilRoute
+  '/signaler': typeof SignalerRoute
+  '/confirmation/$id': typeof ConfirmationIdRoute
+  '/mairie/agents': typeof MairieAgentsRoute
+  '/mairie/carte': typeof MairieCarteRoute
+  '/mairie/signalements': typeof MairieSignalementsRoute
+  '/mairie/statistiques': typeof MairieStatistiquesRoute
+  '/signalement/$id': typeof SignalementIdRoute
+  '/mairie': typeof MairieIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/carte': typeof CarteRoute
+  '/login': typeof LoginRoute
+  '/mairie': typeof MairieRouteWithChildren
+  '/mes-signalements': typeof MesSignalementsRoute
+  '/profil': typeof ProfilRoute
+  '/signaler': typeof SignalerRoute
+  '/confirmation/$id': typeof ConfirmationIdRoute
+  '/mairie/agents': typeof MairieAgentsRoute
+  '/mairie/carte': typeof MairieCarteRoute
+  '/mairie/signalements': typeof MairieSignalementsRoute
+  '/mairie/statistiques': typeof MairieStatistiquesRoute
+  '/signalement/$id': typeof SignalementIdRoute
+  '/mairie/': typeof MairieIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/carte'
+    | '/login'
+    | '/mairie'
+    | '/mes-signalements'
+    | '/profil'
+    | '/signaler'
+    | '/confirmation/$id'
+    | '/mairie/agents'
+    | '/mairie/carte'
+    | '/mairie/signalements'
+    | '/mairie/statistiques'
+    | '/signalement/$id'
+    | '/mairie/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/carte'
+    | '/login'
+    | '/mes-signalements'
+    | '/profil'
+    | '/signaler'
+    | '/confirmation/$id'
+    | '/mairie/agents'
+    | '/mairie/carte'
+    | '/mairie/signalements'
+    | '/mairie/statistiques'
+    | '/signalement/$id'
+    | '/mairie'
+  id:
+    | '__root__'
+    | '/'
+    | '/carte'
+    | '/login'
+    | '/mairie'
+    | '/mes-signalements'
+    | '/profil'
+    | '/signaler'
+    | '/confirmation/$id'
+    | '/mairie/agents'
+    | '/mairie/carte'
+    | '/mairie/signalements'
+    | '/mairie/statistiques'
+    | '/signalement/$id'
+    | '/mairie/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CarteRoute: typeof CarteRoute
+  LoginRoute: typeof LoginRoute
+  MairieRoute: typeof MairieRouteWithChildren
+  MesSignalementsRoute: typeof MesSignalementsRoute
+  ProfilRoute: typeof ProfilRoute
+  SignalerRoute: typeof SignalerRoute
+  ConfirmationIdRoute: typeof ConfirmationIdRoute
+  SignalementIdRoute: typeof SignalementIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signaler': {
+      id: '/signaler'
+      path: '/signaler'
+      fullPath: '/signaler'
+      preLoaderRoute: typeof SignalerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profil': {
+      id: '/profil'
+      path: '/profil'
+      fullPath: '/profil'
+      preLoaderRoute: typeof ProfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mes-signalements': {
+      id: '/mes-signalements'
+      path: '/mes-signalements'
+      fullPath: '/mes-signalements'
+      preLoaderRoute: typeof MesSignalementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mairie': {
+      id: '/mairie'
+      path: '/mairie'
+      fullPath: '/mairie'
+      preLoaderRoute: typeof MairieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carte': {
+      id: '/carte'
+      path: '/carte'
+      fullPath: '/carte'
+      preLoaderRoute: typeof CarteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +256,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mairie/': {
+      id: '/mairie/'
+      path: '/'
+      fullPath: '/mairie/'
+      preLoaderRoute: typeof MairieIndexRouteImport
+      parentRoute: typeof MairieRoute
+    }
+    '/signalement/$id': {
+      id: '/signalement/$id'
+      path: '/signalement/$id'
+      fullPath: '/signalement/$id'
+      preLoaderRoute: typeof SignalementIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mairie/statistiques': {
+      id: '/mairie/statistiques'
+      path: '/statistiques'
+      fullPath: '/mairie/statistiques'
+      preLoaderRoute: typeof MairieStatistiquesRouteImport
+      parentRoute: typeof MairieRoute
+    }
+    '/mairie/signalements': {
+      id: '/mairie/signalements'
+      path: '/signalements'
+      fullPath: '/mairie/signalements'
+      preLoaderRoute: typeof MairieSignalementsRouteImport
+      parentRoute: typeof MairieRoute
+    }
+    '/mairie/carte': {
+      id: '/mairie/carte'
+      path: '/carte'
+      fullPath: '/mairie/carte'
+      preLoaderRoute: typeof MairieCarteRouteImport
+      parentRoute: typeof MairieRoute
+    }
+    '/mairie/agents': {
+      id: '/mairie/agents'
+      path: '/agents'
+      fullPath: '/mairie/agents'
+      preLoaderRoute: typeof MairieAgentsRouteImport
+      parentRoute: typeof MairieRoute
+    }
+    '/confirmation/$id': {
+      id: '/confirmation/$id'
+      path: '/confirmation/$id'
+      fullPath: '/confirmation/$id'
+      preLoaderRoute: typeof ConfirmationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface MairieRouteChildren {
+  MairieAgentsRoute: typeof MairieAgentsRoute
+  MairieCarteRoute: typeof MairieCarteRoute
+  MairieSignalementsRoute: typeof MairieSignalementsRoute
+  MairieStatistiquesRoute: typeof MairieStatistiquesRoute
+  MairieIndexRoute: typeof MairieIndexRoute
+}
+
+const MairieRouteChildren: MairieRouteChildren = {
+  MairieAgentsRoute: MairieAgentsRoute,
+  MairieCarteRoute: MairieCarteRoute,
+  MairieSignalementsRoute: MairieSignalementsRoute,
+  MairieStatistiquesRoute: MairieStatistiquesRoute,
+  MairieIndexRoute: MairieIndexRoute,
+}
+
+const MairieRouteWithChildren =
+  MairieRoute._addFileChildren(MairieRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CarteRoute: CarteRoute,
+  LoginRoute: LoginRoute,
+  MairieRoute: MairieRouteWithChildren,
+  MesSignalementsRoute: MesSignalementsRoute,
+  ProfilRoute: ProfilRoute,
+  SignalerRoute: SignalerRoute,
+  ConfirmationIdRoute: ConfirmationIdRoute,
+  SignalementIdRoute: SignalementIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
