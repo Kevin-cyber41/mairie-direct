@@ -11,7 +11,6 @@ import { useEffect } from "react";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
-import { useReportNotifications } from "@/hooks/use-report-notifications";
 
 import appCss from "../styles.css?url";
 
@@ -69,13 +68,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#2E7D32" },
       { title: "Ma Ville — Signaler un problème" },
       { name: "description", content: "Signalez les problèmes de votre commune en moins de 30 secondes." },
+      { property: "og:title", content: "Ma Ville — Signaler un problème" },
+      { name: "twitter:title", content: "Ma Ville — Signaler un problème" },
+      { property: "og:description", content: "Signalez les problèmes de votre commune en moins de 30 secondes." },
+      { name: "twitter:description", content: "Signalez les problèmes de votre commune en moins de 30 secondes." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/KzT6P5mqNIX797n9Q8awRdPOhn73/social-images/social-1779197751059-embleme_romorantin.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/KzT6P5mqNIX797n9Q8awRdPOhn73/social-images/social-1779197751059-embleme_romorantin.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/icon-512.png" },
-      { rel: "icon", href: "/icon-512.png", type: "image/png" },
-    ],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -98,7 +100,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function AuthBridge() {
   const router = useRouter();
   const qc = useQueryClient();
-  useReportNotifications();
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
       router.invalidate();
