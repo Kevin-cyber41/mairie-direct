@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/app-header";
 import { BottomNav } from "@/components/bottom-nav";
 import { StatusBadge } from "@/components/status-badge";
+import { GoogleMap, type MapMarker } from "@/components/google-map";
 import { CATEGORIES, getCategory, timeAgo, type Category, type Status } from "@/lib/categories";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +25,7 @@ interface R {
 }
 
 function CartePage() {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState<Category | "all">("all");
 
   const { data: reports = [] } = useQuery({
@@ -33,29 +35,34 @@ function CartePage() {
         .from("reports")
         .select("id,category,status,description,address,latitude,longitude,created_at")
         .order("created_at", { ascending: false })
-        .limit(100);
+        .limit(200);
       return (data ?? []) as R[];
     },
   });
 
   const filtered = filter === "all" ? reports : reports.filter((r) => r.category === filter);
-  const withCoords = filtered.filter((r) => r.latitude && r.longitude);
-
-  // simple bbox to place markers
-  const bbox = withCoords.length
-    ? {
-        minLat: Math.min(...withCoords.map((r) => r.latitude!)),
-        maxLat: Math.max(...withCoords.map((r) => r.latitude!)),
-        minLng: Math.min(...withCoords.map((r) => r.longitude!)),
-        maxLng: Math.max(...withCoords.map((r) => r.longitude!)),
-      }
-    : null;
+  const markers: MapMarker[] = useMemo(
+    () =>
+      filtered
+        .filter((r) => r.latitude && r.longitude)
+        .map((r) => {
+          const cat = getCategory(r.category);
+          return {
+            id: r.id,
+            lat: r.latitude!,
+            lng: r.longitude!,
+            color: cat.color,
+            title: r.description ?? cat.label,
+            onClick: () => navigate({ to: "/signalement/$id", params: { id: r.id } }),
+          };
+        }),
+    [filtered, navigate]
+  );
 
   return (
     <div className="min-h-screen bg-background pb-20">
       <AppHeader title="Carte des signalements" />
 
-      {/* Filters */}
       <div className="border-b border-border bg-card sticky top-[57px] z-20">
         <div className="mx-auto flex max-w-md gap-2 overflow-x-auto px-4 py-2.5 scrollbar-none">
           <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>Tous</FilterChip>
@@ -68,42 +75,8 @@ function CartePage() {
       </div>
 
       <main className="mx-auto max-w-md px-4 py-4 space-y-4">
-        {/* Map placeholder */}
-        <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary-soft via-card to-accent shadow-inner">
-          {/* grid */}
-          <svg className="absolute inset-0 h-full w-full opacity-30" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
-                <path d="M 32 0 L 0 0 0 32" fill="none" stroke="currentColor" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" className="text-primary" />
-          </svg>
-          {/* markers */}
-          {bbox && withCoords.map((r) => {
-            const cat = getCategory(r.category);
-            const x = bbox.maxLng === bbox.minLng ? 50 : ((r.longitude! - bbox.minLng) / (bbox.maxLng - bbox.minLng)) * 80 + 10;
-            const y = bbox.maxLat === bbox.minLat ? 50 : (1 - (r.latitude! - bbox.minLat) / (bbox.maxLat - bbox.minLat)) * 80 + 10;
-            const Icon = cat.icon;
-            return (
-              <Link
-                key={r.id}
-                to="/signalement/$id"
-                params={{ id: r.id }}
-                className="absolute -translate-x-1/2 -translate-y-1/2 group"
-                style={{ left: `${x}%`, top: `${y}%` }}
-              >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full shadow-lg ring-2 ring-card transition-transform group-hover:scale-110" style={{ backgroundColor: cat.color }}>
-                  <Icon className="h-4 w-4 text-white" />
-                </span>
-              </Link>
-            );
-          })}
-          {!withCoords.length && (
-            <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
-              Aucun signalement géolocalisé
-            </div>
-          )}
+        <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-muted">
+          <GoogleMap markers={markers} className="h-full w-full" />
         </div>
 
         <p className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
