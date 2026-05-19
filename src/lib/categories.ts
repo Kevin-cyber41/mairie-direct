@@ -1,4 +1,4 @@
-import { Construction, Lightbulb, Sign, Trash2, Sofa, Trees, HelpCircle, type LucideIcon } from "lucide-react";
+import { Construction, Lightbulb, Signpost, Trash2, Sofa, Trees, HelpCircle, type LucideIcon } from "lucide-react";
 
 export type Category = "voirie" | "eclairage" | "panneaux" | "dechets" | "mobilier" | "espaces_verts" | "autres";
 export type Status = "recu" | "en_cours" | "resolu";
@@ -6,7 +6,7 @@ export type Status = "recu" | "en_cours" | "resolu";
 export const CATEGORIES: { id: Category; label: string; icon: LucideIcon; color: string }[] = [
   { id: "voirie", label: "Voirie", icon: Construction, color: "var(--cat-voirie)" },
   { id: "eclairage", label: "Éclairage", icon: Lightbulb, color: "var(--cat-eclairage)" },
-  { id: "panneaux", label: "Panneaux", icon: Sign, color: "var(--cat-panneaux)" },
+  { id: "panneaux", label: "Panneaux", icon: Signpost, color: "var(--cat-panneaux)" },
   { id: "dechets", label: "Déchets", icon: Trash2, color: "var(--cat-dechets)" },
   { id: "mobilier", label: "Mobilier", icon: Sofa, color: "var(--cat-mobilier)" },
   { id: "espaces_verts", label: "Espaces verts", icon: Trees, color: "var(--cat-verts)" },
