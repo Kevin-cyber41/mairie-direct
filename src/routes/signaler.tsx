@@ -29,6 +29,9 @@ function SignalerPage() {
   const [submitting, setSubmitting] = useState(false);
   const cameraInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
+  const [showNearby, setShowNearby] = useState(false);
+
+  const outOfZone = coords ? !isInRomorantin(coords.lat, coords.lng) : false;
 
   // Auto GPS
   useEffect(() => {
