@@ -1,11 +1,13 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
-import { ArrowLeft, Camera, Image as ImageIcon, MapPin, Send, X, Loader2, Check } from "lucide-react";
+import { ArrowLeft, Camera, Image as ImageIcon, MapPin, Send, X, Loader2, Check, AlertTriangle, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, type Category } from "@/lib/categories";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { isInRomorantin } from "@/lib/geo";
+import { NearbyReportsModal } from "@/components/nearby-reports-modal";
 
 export const Route = createFileRoute("/signaler")({
   component: SignalerPage,
