@@ -79,6 +79,13 @@ function SignalerPage() {
       toast.error("Photo et catégorie obligatoires");
       return;
     }
+    if (coords && !isInRomorantin(coords.lat, coords.lng)) {
+      toast.error("Hors zone : signalement non transmis", {
+        description: "Nous ne pouvons prendre en compte que les signalements sur le territoire de Romorantin-Lanthenay. Merci de votre compréhension.",
+        duration: 7000,
+      });
+      return;
+    }
     setSubmitting(true);
     try {
       const ext = photo.name.split(".").pop() || "jpg";
