@@ -1,11 +1,13 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
-import { ArrowLeft, Camera, Image as ImageIcon, MapPin, Send, X, Loader2, Check } from "lucide-react";
+import { ArrowLeft, Camera, Image as ImageIcon, MapPin, Send, X, Loader2, Check, AlertTriangle, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, type Category } from "@/lib/categories";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { isInRomorantin } from "@/lib/geo";
+import { NearbyReportsModal } from "@/components/nearby-reports-modal";
 
 export const Route = createFileRoute("/signaler")({
   component: SignalerPage,
@@ -27,6 +29,9 @@ function SignalerPage() {
   const [submitting, setSubmitting] = useState(false);
   const cameraInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
+  const [showNearby, setShowNearby] = useState(false);
+
+  const outOfZone = coords ? !isInRomorantin(coords.lat, coords.lng) : false;
 
   // Auto GPS
   useEffect(() => {
@@ -72,6 +77,13 @@ function SignalerPage() {
     }
     if (!photo || !category) {
       toast.error("Photo et catégorie obligatoires");
+      return;
+    }
+    if (coords && !isInRomorantin(coords.lat, coords.lng)) {
+      toast.error("Hors zone : signalement non transmis", {
+        description: "Nous ne pouvons prendre en compte que les signalements sur le territoire de Romorantin-Lanthenay. Merci de votre compréhension.",
+        duration: 7000,
+      });
       return;
     }
     setSubmitting(true);
@@ -169,9 +181,35 @@ function SignalerPage() {
                 </>
               )}
             </div>
-            {gpsStatus === "ok" && <Check className="h-5 w-5 text-primary" />}
+            {gpsStatus === "ok" && !outOfZone && <Check className="h-5 w-5 text-primary" />}
+            {outOfZone && <AlertTriangle className="h-5 w-5 text-destructive" />}
           </div>
+
+          {outOfZone && (
+            <div className="mt-3 rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+              <p className="font-semibold">Hors de Romorantin-Lanthenay</p>
+              <p className="mt-1 text-xs">
+                Nous ne pouvons prendre en compte que les signalements sur le territoire de Romorantin-Lanthenay. Merci de votre compréhension.
+              </p>
+            </div>
+          )}
+
+          {coords && !outOfZone && (
+            <button
+              type="button"
+              onClick={() => setShowNearby(true)}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-primary/40 bg-primary-soft px-3 py-2.5 text-sm font-semibold text-primary hover:bg-primary-soft/80"
+            >
+              <Eye className="h-4 w-4" />
+              Voir les anomalies déjà signalées à proximité
+            </button>
+          )}
         </Section>
+
+        {showNearby && coords && (
+          <NearbyReportsModal coords={coords} onClose={() => setShowNearby(false)} />
+        )}
+
 
         {/* CATEGORY */}
         <Section active={step === "category" || stepNum > 3} title="Catégorie" required>
@@ -223,7 +261,7 @@ function SignalerPage() {
             </button>
           ) : (
             <button
-              disabled={submitting || !photo || !category}
+              disabled={submitting || !photo || !category || outOfZone}
               onClick={submit}
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-base font-semibold text-primary-foreground shadow-md disabled:opacity-40"
             >

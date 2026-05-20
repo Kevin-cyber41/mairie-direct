@@ -1,20 +1,22 @@
 import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
-import { LayoutDashboard, Map, FileText, Users as UsersIcon, BarChart3, Settings, LogOut, Bell } from "lucide-react";
+import { LayoutDashboard, Map, FileText, Users as UsersIcon, BarChart3, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import logoVille from "@/assets/logo-ville.png";
 
 export const Route = createFileRoute("/mairie")({
   component: MairieLayout,
 });
 
 const NAV = [
-  { to: "/mairie", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
+  { to: "/mairie", label: "Accueil", icon: LayoutDashboard, exact: true },
   { to: "/mairie/carte", label: "Carte", icon: Map },
   { to: "/mairie/signalements", label: "Tous les signalements", icon: FileText },
   { to: "/mairie/agents", label: "Agents", icon: UsersIcon },
   { to: "/mairie/statistiques", label: "Statistiques", icon: BarChart3 },
+  { to: "/mairie/parametres", label: "Paramètres", icon: Settings },
 ];
 
 function MairieLayout() {
@@ -34,7 +36,7 @@ function MairieLayout() {
       <aside className="hidden md:flex w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground">
         <div className="border-b border-sidebar-border p-5">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gold text-sidebar-primary-foreground font-bold">MV</div>
+            <img src={logoVille} alt="Romorantin" width={36} height={36} className="h-9 w-9 rounded-lg bg-white/95 p-0.5" />
             <div>
               <p className="font-bold leading-tight">Mairie</p>
               <p className="text-[11px] text-sidebar-foreground/70">Romorantin-Lanthenay</p>
