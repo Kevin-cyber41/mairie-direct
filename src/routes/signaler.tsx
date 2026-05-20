@@ -181,9 +181,35 @@ function SignalerPage() {
                 </>
               )}
             </div>
-            {gpsStatus === "ok" && <Check className="h-5 w-5 text-primary" />}
+            {gpsStatus === "ok" && !outOfZone && <Check className="h-5 w-5 text-primary" />}
+            {outOfZone && <AlertTriangle className="h-5 w-5 text-destructive" />}
           </div>
+
+          {outOfZone && (
+            <div className="mt-3 rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+              <p className="font-semibold">Hors de Romorantin-Lanthenay</p>
+              <p className="mt-1 text-xs">
+                Nous ne pouvons prendre en compte que les signalements sur le territoire de Romorantin-Lanthenay. Merci de votre compréhension.
+              </p>
+            </div>
+          )}
+
+          {coords && !outOfZone && (
+            <button
+              type="button"
+              onClick={() => setShowNearby(true)}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-primary/40 bg-primary-soft px-3 py-2.5 text-sm font-semibold text-primary hover:bg-primary-soft/80"
+            >
+              <Eye className="h-4 w-4" />
+              Voir les anomalies déjà signalées à proximité
+            </button>
+          )}
         </Section>
+
+        {showNearby && coords && (
+          <NearbyReportsModal coords={coords} onClose={() => setShowNearby(false)} />
+        )}
+
 
         {/* CATEGORY */}
         <Section active={step === "category" || stepNum > 3} title="Catégorie" required>
