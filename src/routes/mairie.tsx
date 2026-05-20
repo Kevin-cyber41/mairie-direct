@@ -1,20 +1,22 @@
 import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
-import { LayoutDashboard, Map, FileText, Users as UsersIcon, BarChart3, Settings, LogOut, Bell } from "lucide-react";
+import { LayoutDashboard, Map, FileText, Users as UsersIcon, BarChart3, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import logoVille from "@/assets/logo-ville.png";
 
 export const Route = createFileRoute("/mairie")({
   component: MairieLayout,
 });
 
 const NAV = [
-  { to: "/mairie", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
+  { to: "/mairie", label: "Accueil", icon: LayoutDashboard, exact: true },
   { to: "/mairie/carte", label: "Carte", icon: Map },
   { to: "/mairie/signalements", label: "Tous les signalements", icon: FileText },
   { to: "/mairie/agents", label: "Agents", icon: UsersIcon },
   { to: "/mairie/statistiques", label: "Statistiques", icon: BarChart3 },
+  { to: "/mairie/parametres", label: "Paramètres", icon: Settings },
 ];
 
 function MairieLayout() {
