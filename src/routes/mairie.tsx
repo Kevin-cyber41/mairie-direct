@@ -36,7 +36,7 @@ function MairieLayout() {
       <aside className="hidden md:flex w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground">
         <div className="border-b border-sidebar-border p-5">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gold text-sidebar-primary-foreground font-bold">MV</div>
+            <img src={logoVille} alt="Romorantin" width={36} height={36} className="h-9 w-9 rounded-lg bg-white/95 p-0.5" />
             <div>
               <p className="font-bold leading-tight">Mairie</p>
               <p className="text-[11px] text-sidebar-foreground/70">Romorantin-Lanthenay</p>
