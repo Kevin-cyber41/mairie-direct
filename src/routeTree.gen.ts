@@ -20,6 +20,7 @@ import { Route as MairieIndexRouteImport } from './routes/mairie.index'
 import { Route as SignalementIdRouteImport } from './routes/signalement.$id'
 import { Route as MairieStatistiquesRouteImport } from './routes/mairie.statistiques'
 import { Route as MairieSignalementsRouteImport } from './routes/mairie.signalements'
+import { Route as MairieParametresRouteImport } from './routes/mairie.parametres'
 import { Route as MairieCarteRouteImport } from './routes/mairie.carte'
 import { Route as MairieAgentsRouteImport } from './routes/mairie.agents'
 import { Route as ConfirmationIdRouteImport } from './routes/confirmation.$id'
@@ -79,6 +80,11 @@ const MairieSignalementsRoute = MairieSignalementsRouteImport.update({
   path: '/signalements',
   getParentRoute: () => MairieRoute,
 } as any)
+const MairieParametresRoute = MairieParametresRouteImport.update({
+  id: '/parametres',
+  path: '/parametres',
+  getParentRoute: () => MairieRoute,
+} as any)
 const MairieCarteRoute = MairieCarteRouteImport.update({
   id: '/carte',
   path: '/carte',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/confirmation/$id': typeof ConfirmationIdRoute
   '/mairie/agents': typeof MairieAgentsRoute
   '/mairie/carte': typeof MairieCarteRoute
+  '/mairie/parametres': typeof MairieParametresRoute
   '/mairie/signalements': typeof MairieSignalementsRoute
   '/mairie/statistiques': typeof MairieStatistiquesRoute
   '/signalement/$id': typeof SignalementIdRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/confirmation/$id': typeof ConfirmationIdRoute
   '/mairie/agents': typeof MairieAgentsRoute
   '/mairie/carte': typeof MairieCarteRoute
+  '/mairie/parametres': typeof MairieParametresRoute
   '/mairie/signalements': typeof MairieSignalementsRoute
   '/mairie/statistiques': typeof MairieStatistiquesRoute
   '/signalement/$id': typeof SignalementIdRoute
@@ -138,6 +146,7 @@ export interface FileRoutesById {
   '/confirmation/$id': typeof ConfirmationIdRoute
   '/mairie/agents': typeof MairieAgentsRoute
   '/mairie/carte': typeof MairieCarteRoute
+  '/mairie/parametres': typeof MairieParametresRoute
   '/mairie/signalements': typeof MairieSignalementsRoute
   '/mairie/statistiques': typeof MairieStatistiquesRoute
   '/signalement/$id': typeof SignalementIdRoute
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/confirmation/$id'
     | '/mairie/agents'
     | '/mairie/carte'
+    | '/mairie/parametres'
     | '/mairie/signalements'
     | '/mairie/statistiques'
     | '/signalement/$id'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/confirmation/$id'
     | '/mairie/agents'
     | '/mairie/carte'
+    | '/mairie/parametres'
     | '/mairie/signalements'
     | '/mairie/statistiques'
     | '/signalement/$id'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/confirmation/$id'
     | '/mairie/agents'
     | '/mairie/carte'
+    | '/mairie/parametres'
     | '/mairie/signalements'
     | '/mairie/statistiques'
     | '/signalement/$id'
@@ -284,6 +296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MairieSignalementsRouteImport
       parentRoute: typeof MairieRoute
     }
+    '/mairie/parametres': {
+      id: '/mairie/parametres'
+      path: '/parametres'
+      fullPath: '/mairie/parametres'
+      preLoaderRoute: typeof MairieParametresRouteImport
+      parentRoute: typeof MairieRoute
+    }
     '/mairie/carte': {
       id: '/mairie/carte'
       path: '/carte'
@@ -311,6 +330,7 @@ declare module '@tanstack/react-router' {
 interface MairieRouteChildren {
   MairieAgentsRoute: typeof MairieAgentsRoute
   MairieCarteRoute: typeof MairieCarteRoute
+  MairieParametresRoute: typeof MairieParametresRoute
   MairieSignalementsRoute: typeof MairieSignalementsRoute
   MairieStatistiquesRoute: typeof MairieStatistiquesRoute
   MairieIndexRoute: typeof MairieIndexRoute
@@ -319,6 +339,7 @@ interface MairieRouteChildren {
 const MairieRouteChildren: MairieRouteChildren = {
   MairieAgentsRoute: MairieAgentsRoute,
   MairieCarteRoute: MairieCarteRoute,
+  MairieParametresRoute: MairieParametresRoute,
   MairieSignalementsRoute: MairieSignalementsRoute,
   MairieStatistiquesRoute: MairieStatistiquesRoute,
   MairieIndexRoute: MairieIndexRoute,
@@ -341,3 +362,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
