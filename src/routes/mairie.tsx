@@ -122,7 +122,7 @@ function MairieLayout() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold">{user.user_metadata?.full_name || user.email}</p>
-              <p className="text-[11px] text-sidebar-foreground/60">Agent</p>
+              <p className="text-[11px] text-sidebar-foreground/60">Administrateur</p>
             </div>
             <button onClick={async () => { await signOut(); navigate({ to: "/" }); }} className="rounded p-1.5 hover:bg-sidebar-accent" aria-label="Déconnexion">
               <LogOut className="h-4 w-4" />
