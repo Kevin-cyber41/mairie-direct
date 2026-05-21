@@ -1,9 +1,11 @@
-import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
-import { LayoutDashboard, Map, FileText, Users as UsersIcon, BarChart3, Settings, LogOut } from "lucide-react";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { LayoutDashboard, Map, FileText, Users as UsersIcon, BarChart3, Settings, LogOut, ChevronDown, Zap, UserPlus } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import logoVille from "@/assets/logo-ville.png";
 
 export const Route = createFileRoute("/mairie")({
