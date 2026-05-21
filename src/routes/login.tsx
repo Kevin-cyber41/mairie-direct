@@ -87,6 +87,30 @@ function LoginPage() {
         <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="mt-4 w-full text-center text-sm text-muted-foreground">
           {mode === "signin" ? "Pas encore de compte ? S'inscrire" : "Déjà un compte ? Se connecter"}
         </button>
+
+        <div className="mt-6 border-t border-border pt-4">
+          <button
+            type="button"
+            disabled={loading}
+            onClick={async () => {
+              setLoading(true);
+              const { error } = await supabase.auth.signInWithPassword({
+                email: "agent@mairie.test",
+                password: "Demo2026!",
+              });
+              setLoading(false);
+              if (error) return toast.error(error.message);
+              toast.success("Connecté en tant qu'agent démo");
+              navigate({ to: "/mairie" });
+            }}
+            className="w-full rounded-xl border-2 border-dashed border-primary/40 bg-primary-soft py-3 text-sm font-semibold text-primary-dark hover:bg-primary/10 disabled:opacity-50"
+          >
+            🔑 Connexion rapide démo agent
+          </button>
+          <p className="mt-1.5 text-center text-[11px] text-muted-foreground">
+            agent@mairie.test · Demo2026!
+          </p>
+        </div>
       </main>
     </div>
   );

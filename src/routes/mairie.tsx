@@ -1,9 +1,11 @@
-import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
-import { LayoutDashboard, Map, FileText, Users as UsersIcon, BarChart3, Settings, LogOut } from "lucide-react";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { LayoutDashboard, Map, FileText, Users as UsersIcon, BarChart3, Settings, LogOut, ChevronDown, Zap, UserPlus } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import logoVille from "@/assets/logo-ville.png";
 
 export const Route = createFileRoute("/mairie")({
@@ -23,10 +25,35 @@ function MairieLayout() {
   const { user, isAgent, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [switching, setSwitching] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!loading && (!user || !isAgent)) navigate({ to: "/" });
+    if (!loading && (!user || !isAgent)) navigate({ to: "/login" });
   }, [user, isAgent, loading, navigate]);
+
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  async function quickDemoLogin() {
+    setSwitching(true);
+    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signInWithPassword({
+      email: "agent@mairie.test",
+      password: "Demo2026!",
+    });
+    setSwitching(false);
+    setMenuOpen(false);
+    if (error) return toast.error(error.message);
+    toast.success("Connecté en démo");
+    navigate({ to: "/mairie" });
+  }
 
   if (loading) return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Chargement…</div>;
   if (!user || !isAgent) return null;
@@ -34,14 +61,42 @@ function MairieLayout() {
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="hidden md:flex w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground">
-        <div className="border-b border-sidebar-border p-5">
-          <div className="flex items-center gap-2">
+        <div className="relative border-b border-sidebar-border p-4" ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            className="flex w-full items-center gap-2 rounded-lg p-1 transition-colors hover:bg-sidebar-accent"
+          >
             <img src={logoVille} alt="Romorantin" width={36} height={36} className="h-9 w-9 rounded-lg bg-white/95 p-0.5" />
-            <div>
+            <div className="min-w-0 flex-1 text-left">
               <p className="font-bold leading-tight">Mairie</p>
-              <p className="text-[11px] text-sidebar-foreground/70">Romorantin-Lanthenay</p>
+              <p className="text-[11px] text-sidebar-foreground/70 truncate">Romorantin-Lanthenay</p>
             </div>
-          </div>
+            <ChevronDown className={cn("h-4 w-4 transition-transform text-sidebar-foreground/60", menuOpen && "rotate-180")} />
+          </button>
+
+          {menuOpen && (
+            <div className="absolute left-3 right-3 top-full z-50 mt-1 overflow-hidden rounded-lg border border-sidebar-border bg-sidebar shadow-xl">
+              <button
+                onClick={quickDemoLogin}
+                disabled={switching}
+                className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm hover:bg-sidebar-accent disabled:opacity-50"
+              >
+                <Zap className="h-4 w-4 text-gold" />
+                <div>
+                  <p className="font-semibold">Connexion rapide démo</p>
+                  <p className="text-[10px] text-sidebar-foreground/60">agent@mairie.test</p>
+                </div>
+              </button>
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-2.5 border-t border-sidebar-border px-3 py-2.5 text-sm hover:bg-sidebar-accent"
+              >
+                <UserPlus className="h-4 w-4 text-gold" />
+                <p className="font-semibold">Créer un nouvel accès agent</p>
+              </Link>
+            </div>
+          )}
         </div>
 
         <nav className="flex-1 space-y-0.5 p-3">
@@ -67,7 +122,7 @@ function MairieLayout() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold">{user.user_metadata?.full_name || user.email}</p>
-              <p className="text-[11px] text-sidebar-foreground/60">Agent</p>
+              <p className="text-[11px] text-sidebar-foreground/60">Administrateur</p>
             </div>
             <button onClick={async () => { await signOut(); navigate({ to: "/" }); }} className="rounded p-1.5 hover:bg-sidebar-accent" aria-label="Déconnexion">
               <LogOut className="h-4 w-4" />
