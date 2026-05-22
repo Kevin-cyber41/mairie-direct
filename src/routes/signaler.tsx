@@ -33,9 +33,32 @@ function SignalerPage() {
 
   const outOfZone = coords ? !isInRomorantin(coords.lat, coords.lng) : false;
 
-  // Auto GPS
-  useEffect(() => {
-    if (gpsStatus !== "idle") return;
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(false);
+
+  async function reverseGeocode(lat: number, lng: number) {
+    // Try Google via connector gateway first; fallback to Nominatim
+    try {
+      const url = `https://connector-gateway.lovable.dev/google_maps/maps/api/geocode/json?latlng=${lat},${lng}&language=fr`;
+      const r = await fetch(url);
+      const j = await r.json();
+      const first = j?.results?.[0];
+      if (first?.formatted_address) return first.formatted_address as string;
+    } catch {}
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`, {
+        headers: { "Accept-Language": "fr" },
+      });
+      const j = await r.json();
+      const a = j.address ?? {};
+      const street = [a.road, a.house_number].filter(Boolean).join(" ");
+      return street ? `${street}, ${a.city || a.town || a.village || ""}` : (j.display_name ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+    } catch {
+      return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    }
+  }
+
+  function fetchGps() {
     if (!navigator.geolocation) {
       setGpsStatus("error");
       return;
@@ -43,25 +66,42 @@ function SignalerPage() {
     setGpsStatus("loading");
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
-        const { latitude, longitude, accuracy } = pos.coords;
+        const { latitude, longitude } = pos.coords;
         setCoords({ lat: latitude, lng: longitude });
-        try {
-          const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18`, {
-            headers: { "Accept-Language": "fr" },
-          });
-          const j = await r.json();
-          const a = j.address ?? {};
-          const street = [a.road, a.house_number].filter(Boolean).join(" ");
-          setAddress(street ? `${street}, ${a.city || a.town || a.village || ""}` : (j.display_name ?? "Position GPS"));
-        } catch {
-          setAddress(`${latitude.toFixed(5)}, ${longitude.toFixed(5)} (±${Math.round(accuracy)}m)`);
-        }
+        const addr = await reverseGeocode(latitude, longitude);
+        setAddress(addr);
         setGpsStatus("ok");
       },
-      () => setGpsStatus("error"),
-      { enableHighAccuracy: true, timeout: 10000 }
+      (err) => {
+        setGpsStatus("error");
+        if (err.code === err.PERMISSION_DENIED) {
+          toast.error("Géolocalisation refusée", { description: "Vous pouvez saisir l'adresse manuellement." });
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
     );
-  }, [gpsStatus]);
+  }
+
+  // Initial permission check
+  useEffect(() => {
+    if (gpsStatus !== "idle") return;
+    if (!navigator.geolocation) {
+      setGpsStatus("error");
+      return;
+    }
+    const perms = (navigator as any).permissions;
+    if (perms?.query) {
+      perms.query({ name: "geolocation" }).then((res: any) => {
+        if (res.state === "granted") fetchGps();
+        else if (res.state === "prompt") setShowPermissionModal(true);
+        else { setGpsStatus("error"); }
+      }).catch(() => setShowPermissionModal(true));
+    } else {
+      setShowPermissionModal(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   function handlePhoto(file: File) {
     setPhoto(file);
