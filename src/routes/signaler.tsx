@@ -207,22 +207,40 @@ function SignalerPage() {
           <div className="flex items-start gap-3 rounded-xl bg-primary-soft p-3">
             <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
             <div className="min-w-0 flex-1">
+              {gpsStatus === "idle" && <p className="text-sm text-muted-foreground">En attente de localisation…</p>}
               {gpsStatus === "loading" && <p className="text-sm text-muted-foreground flex items-center gap-2"><Loader2 className="h-3 w-3 animate-spin" /> Récupération de votre position…</p>}
-              {gpsStatus === "ok" && (
+              {gpsStatus === "ok" && !editingAddress && (
                 <>
                   <p className="text-sm font-semibold leading-tight">{address}</p>
-                  {coords && <p className="mt-0.5 text-xs text-muted-foreground">{coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}</p>}
+                  {coords && <p className="mt-0.5 text-xs text-muted-foreground">{coords.lat.toFixed(5)}°N, {coords.lng.toFixed(5)}°E</p>}
                 </>
               )}
-              {gpsStatus === "error" && (
+              {(gpsStatus === "error" || editingAddress) && (
                 <>
-                  <p className="text-sm text-destructive">GPS indisponible.</p>
-                  <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Adresse manuelle…" className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm" />
+                  {gpsStatus === "error" && <p className="text-sm text-destructive mb-1">GPS indisponible — saisie manuelle.</p>}
+                  <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Adresse, rue, lieu-dit…" className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm" />
                 </>
               )}
             </div>
-            {gpsStatus === "ok" && !outOfZone && <Check className="h-5 w-5 text-primary" />}
+            {gpsStatus === "ok" && !outOfZone && !editingAddress && <Check className="h-5 w-5 text-primary" />}
             {outOfZone && <AlertTriangle className="h-5 w-5 text-destructive" />}
+          </div>
+
+          <div className="mt-2 flex gap-2">
+            <button
+              type="button"
+              onClick={() => { setEditingAddress(false); fetchGps(); }}
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold hover:bg-accent"
+            >
+              <RefreshCw className="h-3.5 w-3.5" /> Actualiser
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditingAddress((v) => !v)}
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold hover:bg-accent"
+            >
+              <Pencil className="h-3.5 w-3.5" /> {editingAddress ? "Valider" : "Modifier position"}
+            </button>
           </div>
 
           {outOfZone && (
@@ -249,6 +267,36 @@ function SignalerPage() {
         {showNearby && coords && (
           <NearbyReportsModal coords={coords} onClose={() => setShowNearby(false)} />
         )}
+
+        {showPermissionModal && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-4" onClick={() => setShowPermissionModal(false)}>
+            <div className="w-full max-w-sm rounded-2xl bg-card p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary-soft">
+                <MapPin className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-center text-base font-bold">Localisation requise</h3>
+              <p className="mt-2 text-center text-sm text-muted-foreground">
+                Activez la localisation pour signaler ce problème avec précision.
+              </p>
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={() => { setShowPermissionModal(false); setGpsStatus("error"); setEditingAddress(true); }}
+                  className="flex-1 rounded-lg border border-border px-3 py-2.5 text-sm font-semibold hover:bg-accent"
+                >
+                  Pas maintenant
+                </button>
+                <button
+                  onClick={() => { setShowPermissionModal(false); fetchGps(); }}
+                  className="flex-1 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                >
+                  Autoriser
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+
 
 
         {/* CATEGORY */}
