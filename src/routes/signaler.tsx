@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
-import { ArrowLeft, Camera, Image as ImageIcon, MapPin, Send, X, Loader2, Check, AlertTriangle, Eye } from "lucide-react";
+import { ArrowLeft, Camera, Image as ImageIcon, MapPin, Send, X, Loader2, Check, AlertTriangle, Eye, RefreshCw, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, type Category } from "@/lib/categories";
