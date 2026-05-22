@@ -24,6 +24,7 @@ import { Route as MairieParametresRouteImport } from './routes/mairie.parametres
 import { Route as MairieCarteRouteImport } from './routes/mairie.carte'
 import { Route as MairieAgentsRouteImport } from './routes/mairie.agents'
 import { Route as ConfirmationIdRouteImport } from './routes/confirmation.$id'
+import { Route as MairieSignalementIdRouteImport } from './routes/mairie.signalement.$id'
 
 const SignalerRoute = SignalerRouteImport.update({
   id: '/signaler',
@@ -100,6 +101,11 @@ const ConfirmationIdRoute = ConfirmationIdRouteImport.update({
   path: '/confirmation/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MairieSignalementIdRoute = MairieSignalementIdRouteImport.update({
+  id: '/signalement/$id',
+  path: '/signalement/$id',
+  getParentRoute: () => MairieRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/mairie/statistiques': typeof MairieStatistiquesRoute
   '/signalement/$id': typeof SignalementIdRoute
   '/mairie/': typeof MairieIndexRoute
+  '/mairie/signalement/$id': typeof MairieSignalementIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/mairie/statistiques': typeof MairieStatistiquesRoute
   '/signalement/$id': typeof SignalementIdRoute
   '/mairie': typeof MairieIndexRoute
+  '/mairie/signalement/$id': typeof MairieSignalementIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/mairie/statistiques': typeof MairieStatistiquesRoute
   '/signalement/$id': typeof SignalementIdRoute
   '/mairie/': typeof MairieIndexRoute
+  '/mairie/signalement/$id': typeof MairieSignalementIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/mairie/statistiques'
     | '/signalement/$id'
     | '/mairie/'
+    | '/mairie/signalement/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/mairie/statistiques'
     | '/signalement/$id'
     | '/mairie'
+    | '/mairie/signalement/$id'
   id:
     | '__root__'
     | '/'
@@ -203,6 +214,7 @@ export interface FileRouteTypes {
     | '/mairie/statistiques'
     | '/signalement/$id'
     | '/mairie/'
+    | '/mairie/signalement/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -324,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfirmationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mairie/signalement/$id': {
+      id: '/mairie/signalement/$id'
+      path: '/signalement/$id'
+      fullPath: '/mairie/signalement/$id'
+      preLoaderRoute: typeof MairieSignalementIdRouteImport
+      parentRoute: typeof MairieRoute
+    }
   }
 }
 
@@ -334,6 +353,7 @@ interface MairieRouteChildren {
   MairieSignalementsRoute: typeof MairieSignalementsRoute
   MairieStatistiquesRoute: typeof MairieStatistiquesRoute
   MairieIndexRoute: typeof MairieIndexRoute
+  MairieSignalementIdRoute: typeof MairieSignalementIdRoute
 }
 
 const MairieRouteChildren: MairieRouteChildren = {
@@ -343,6 +363,7 @@ const MairieRouteChildren: MairieRouteChildren = {
   MairieSignalementsRoute: MairieSignalementsRoute,
   MairieStatistiquesRoute: MairieStatistiquesRoute,
   MairieIndexRoute: MairieIndexRoute,
+  MairieSignalementIdRoute: MairieSignalementIdRoute,
 }
 
 const MairieRouteWithChildren =
@@ -362,13 +383,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
